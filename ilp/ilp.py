@@ -1,12 +1,11 @@
-import cvxpy as cp
+
 from math import floor
 from math import ceil
 import pandas as pd
 import numpy as np
 import pip
 
-if not ('SCIP' in cp.installed_solvers()):
-  pip.main(['install', 'cvxpy[SCIP]'])
+
 
 def prepare_items(dataset, groups, target_prop, score_label, r):
   """
@@ -56,6 +55,10 @@ def construct_lp(
     and a noise generator (for the noisy data experiment),
     return a CVXPY formulation of the ILP.
   """
+  import cvxpy as cp
+  if not ('SCIP' in cp.installed_solvers()):
+    pip.main(['install', 'cvxpy[SCIP]'])
+
   scores = center[score_label].to_numpy()
   k = len(scores)
   if r is None:
@@ -104,6 +107,7 @@ def linprog_alg(
   """
     Given a ranking, list of groups and target proportion of candidates from each group, solve the ILP problem of fair reranking. 
   """
+
   if not (len(target_prop) == len(groups)):
     raise ValueError('Must specify proportions for all groups!')
   ### make center
